@@ -137,9 +137,15 @@ Loop:
 
 	// close the nodes
 	nodeArray := clstr.GetNodes()
+	var wg sync.WaitGroup
 	for _, node := range nodeArray {
-		node.Close()
+		wg.Add(1)
+		go func() {
+			node.Close()
+			wg.Done()
+		}()
 	}
+	wg.Wait()
 }
 
 // AddSeeds adds new hosts to the cluster.
